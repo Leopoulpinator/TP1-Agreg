@@ -10,6 +10,7 @@ char motActuel[N];
 char avant[N];
 char ligneActuelle[M];
 int sizeActuel = 0;
+int minimum = 0;
 
 typedef struct Abr {
     char lettre;
@@ -123,7 +124,7 @@ void afficheTousLesMots(abr **arbre, int sizeAvant)
 }
 
 
-void afficheMots(abr **arbre, int sizeAvant, couple **motsEtIterations, int nbMots, int minimum)
+void afficheMots(abr **arbre, int sizeAvant, couple **motsEtIterations, int nbMots)
 {
     abr *a = *arbre;
     if (a != NULL)
@@ -180,11 +181,11 @@ void afficheMots(abr **arbre, int sizeAvant, couple **motsEtIterations, int nbMo
         if (a->enfant != NULL)
         {
             avant[sizeAvant] = a->lettre;
-            afficheMots(&(a->enfant), sizeAvant + 1, motsEtIterations, nbMots, minimum);
+            afficheMots(&(a->enfant), sizeAvant + 1, motsEtIterations, nbMots);
         }
         if (a->suivant != NULL)
         {
-            afficheMots(&(a->suivant), sizeAvant, motsEtIterations, nbMots, minimum);
+            afficheMots(&(a->suivant), sizeAvant, motsEtIterations, nbMots);
         }
     }
 }
@@ -274,6 +275,13 @@ int main(int argc, char *argv[]) // TODO : faire en sorte que les fichiers texte
             //printf("%s", ligneActuelle);
         }
         fclose(fichier);
+        // au cas ou le fichier termine sur un caractere :
+        if (sizeActuel > 1) 
+        {
+            parcours(&arbre, sizeActuel, 0);
+        }
+        //printArbreLargeur(&arbre);
+        sizeActuel = 0;
     }
 
     // "suppression" des mots interdits
@@ -304,6 +312,13 @@ int main(int argc, char *argv[]) // TODO : faire en sorte que les fichiers texte
             }
         }
         fclose(fichier);
+        // au cas ou le fichier termine sur un caractere :
+        if (sizeActuel > 0) 
+        {
+            parcours(&arbre, sizeActuel, 1);
+        }
+        //printArbreLargeur(&arbre);
+        sizeActuel = 0;
     }
 
     //printArbreLargeurNbIterations(&arbre);
@@ -322,7 +337,7 @@ int main(int argc, char *argv[]) // TODO : faire en sorte que les fichiers texte
             l[i].nbIterations = 0;
             l[i].sizeMot = 0;
         }
-        afficheMots(&arbre, 0, &l, n, 1);
+        afficheMots(&arbre, 0, &l, n);
     }
     for (int i = 0 ; i < n ; i++)
     {
